@@ -1,0 +1,31 @@
+version: '3'
+services:
+  # App Service
+  app:
+    build:
+      context: ./bookServer
+      dockerfile: Dockerfile
+    expose:
+      - 9090
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Nginx Service
+  nginx:
+    image: nginx:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-conf:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: app-net
+
